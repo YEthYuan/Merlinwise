@@ -11,7 +11,7 @@ import org.springframework.core.env.Environment;
 @SpringBootApplication
 public class MerlinwiseWikiApplication {
 
-    private static final Logger LOG = (Logger) LoggerFactory.getLogger(MerlinwiseWikiApplication.class);
+    private static final Logger LOG = LoggerFactory.getLogger(MerlinwiseWikiApplication.class);
     public static void main(String[] args) {
         SpringApplication app = new SpringApplication(MerlinwiseWikiApplication.class);
         Environment env = app.run(args).getEnvironment();
