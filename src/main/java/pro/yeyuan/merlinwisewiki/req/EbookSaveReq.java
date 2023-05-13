@@ -1,6 +1,6 @@
-package pro.yeyuan.merlinwisewiki.resp;
+package pro.yeyuan.merlinwisewiki.req;
 
-public class EbookResp {
+public class EbookSaveReq {
     private Long id;
 
     private String name;

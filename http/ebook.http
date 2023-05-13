@@ -1,3 +1,13 @@
 GET http://localhost:8080/ebook/list?page=1&size=4
 
 ###
+
+POST http://localhost:8080/ebook/save
+
+{
+        "id": 6,
+        "name": "Redis HandBook",
+        "description": "Very Useful!!!"
+}
+
+###

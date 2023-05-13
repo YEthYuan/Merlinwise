@@ -9,8 +9,9 @@ import org.springframework.util.ObjectUtils;
 import pro.yeyuan.merlinwisewiki.domain.Ebook;
 import pro.yeyuan.merlinwisewiki.domain.EbookExample;
 import pro.yeyuan.merlinwisewiki.mapper.EbookMapper;
-import pro.yeyuan.merlinwisewiki.req.EbookReq;
-import pro.yeyuan.merlinwisewiki.resp.EbookResp;
+import pro.yeyuan.merlinwisewiki.req.EbookQueryReq;
+import pro.yeyuan.merlinwisewiki.req.EbookSaveReq;
+import pro.yeyuan.merlinwisewiki.resp.EbookQueryResp;
 import pro.yeyuan.merlinwisewiki.resp.PageResp;
 import pro.yeyuan.merlinwisewiki.utils.CopyUtil;
 
@@ -25,7 +26,7 @@ public class EbookService {
     @Resource
     private EbookMapper ebookMapper;
 
-    public PageResp<EbookResp> list(EbookReq req) {
+    public PageResp<EbookQueryResp> list(EbookQueryReq req) {
 
         EbookExample ebookExample = new EbookExample();
         EbookExample.Criteria criteria = ebookExample.createCriteria();
@@ -41,18 +42,29 @@ public class EbookService {
         LOG.info("总行数: {}", pageInfo.getTotal());
         LOG.info("总页数: {}", pageInfo.getPages());
 
-//        List<EbookResp> resp = new ArrayList<>();
+//        List<EbookQueryResp> resp = new ArrayList<>();
 //        for (Ebook ebook : ebooks) {
-//            EbookResp ebookResp = new EbookResp();
+//            EbookQueryResp ebookResp = new EbookQueryResp();
 //            BeanUtils.copyProperties(ebook, ebookResp);
 //            resp.add(ebookResp);
 //        }
 
-        List<EbookResp> ebookResps = CopyUtil.copyList(ebooks, EbookResp.class);
-        PageResp<EbookResp> resp = new PageResp<>();
+        List<EbookQueryResp> ebookQueryResps = CopyUtil.copyList(ebooks, EbookQueryResp.class);
+        PageResp<EbookQueryResp> resp = new PageResp<>();
         resp.setTotal(pageInfo.getTotal());
-        resp.setList(ebookResps);
+        resp.setList(ebookQueryResps);
 
         return resp;
+    }
+
+    public void save(EbookSaveReq req) {
+        Ebook ebook = CopyUtil.copy(req, Ebook.class);
+        if(ObjectUtils.isEmpty(req.getId())) {
+            // 新增
+            ebookMapper.insert(ebook);
+        } else {
+            // 更新
+            ebookMapper.updateByPrimaryKey(ebook);
+        }
     }
 }
