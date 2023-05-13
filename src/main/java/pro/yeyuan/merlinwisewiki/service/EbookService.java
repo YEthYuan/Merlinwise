@@ -11,6 +11,7 @@ import pro.yeyuan.merlinwisewiki.domain.EbookExample;
 import pro.yeyuan.merlinwisewiki.mapper.EbookMapper;
 import pro.yeyuan.merlinwisewiki.req.EbookReq;
 import pro.yeyuan.merlinwisewiki.resp.EbookResp;
+import pro.yeyuan.merlinwisewiki.resp.PageResp;
 import pro.yeyuan.merlinwisewiki.utils.CopyUtil;
 
 import javax.annotation.Resource;
@@ -24,7 +25,7 @@ public class EbookService {
     @Resource
     private EbookMapper ebookMapper;
 
-    public List<EbookResp> list(EbookReq req) {
+    public PageResp<EbookResp> list(EbookReq req) {
 
         EbookExample ebookExample = new EbookExample();
         EbookExample.Criteria criteria = ebookExample.createCriteria();
@@ -33,7 +34,7 @@ public class EbookService {
             criteria.andNameLike("%" + req.getName() + "%");
         }
 
-        PageHelper.startPage(1, 3);
+        PageHelper.startPage(req.getPage(), req.getSize());
         List<Ebook> ebooks = ebookMapper.selectByExample(ebookExample);
 
         PageInfo<Ebook> pageInfo = new PageInfo<>(ebooks);
@@ -48,7 +49,10 @@ public class EbookService {
 //        }
 
         List<EbookResp> ebookResps = CopyUtil.copyList(ebooks, EbookResp.class);
+        PageResp<EbookResp> resp = new PageResp<>();
+        resp.setTotal(pageInfo.getTotal());
+        resp.setList(ebookResps);
 
-        return ebookResps;
+        return resp;
     }
 }

@@ -5,10 +5,10 @@ import org.springframework.web.bind.annotation.RestController;
 import pro.yeyuan.merlinwisewiki.req.EbookReq;
 import pro.yeyuan.merlinwisewiki.resp.CommonResp;
 import pro.yeyuan.merlinwisewiki.resp.EbookResp;
+import pro.yeyuan.merlinwisewiki.resp.PageResp;
 import pro.yeyuan.merlinwisewiki.service.EbookService;
 
 import javax.annotation.Resource;
-import java.util.List;
 
 @RestController
 public class EbookController {
@@ -17,9 +17,9 @@ public class EbookController {
     private EbookService ebookService;
 
     @GetMapping("/ebook/list")
-    public CommonResp<List<EbookResp>> list(EbookReq req) {
-        CommonResp<List<EbookResp>> resp = new CommonResp<>();
-        List<EbookResp> list = ebookService.list(req);
+    public CommonResp<PageResp<EbookResp>> list(EbookReq req) {
+        CommonResp<PageResp<EbookResp>> resp = new CommonResp<>();
+        PageResp<EbookResp> list = ebookService.list(req);
         resp.setContent(list);
         return resp;
     }
