@@ -1,58 +1,58 @@
 <template>
   <a-layout-header class="header">
-    <div class="logo">甲蛙知识库</div>
+    <div class="logo">Merlinwise</div>
     <a-menu
       theme="dark"
       mode="horizontal"
       :style="{ lineHeight: '64px' }"
     >
       <a-menu-item key="/">
-        <router-link to="/">首页</router-link>
+        <router-link to="/">Dashboard</router-link>
       </a-menu-item>
       <a-menu-item key="/admin/user" :style="user.id? {} : {display:'none'}">
-        <router-link to="/admin/user">用户管理</router-link>
+        <router-link to="/admin/user">User</router-link>
       </a-menu-item>
       <a-menu-item key="/admin/ebook" :style="user.id? {} : {display:'none'}">
-        <router-link to="/admin/ebook">电子书管理</router-link>
+        <router-link to="/admin/ebook">Ebook</router-link>
       </a-menu-item>
       <a-menu-item key="/admin/category" :style="user.id? {} : {display:'none'}">
-        <router-link to="/admin/category">分类管理</router-link>
+        <router-link to="/admin/category">Category</router-link>
       </a-menu-item>
       <a-menu-item key="/about">
-        <router-link to="/about">关于我们</router-link>
+        <router-link to="/about">About</router-link>
       </a-menu-item>
-      <a-menu-item key="/aliyun">
-        <router-link to="/aliyun">阿里云优惠</router-link>
-      </a-menu-item>
+<!--      <a-menu-item key="/aliyun">-->
+<!--        <router-link to="/aliyun">阿里云优惠</router-link>-->
+<!--      </a-menu-item>-->
       <a-popconfirm
-        title="确认退出登录?"
-        ok-text="是"
-        cancel-text="否"
+        title="Do you want to log out?"
+        ok-text="Yes"
+        cancel-text="No"
         @confirm="logout()"
       >
         <a class="login-menu" v-show="user.id">
-          <span>退出登录</span>
+          <span>Log out</span>
         </a>
       </a-popconfirm>
       <a class="login-menu" v-show="user.id">
-        <span>您好：{{user.name}}</span>
+        <span>Hi {{user.name}}</span>
       </a>
       <a class="login-menu" v-show="!user.id" @click="showLoginModal">
-        <span>登录</span>
+        <span>Log in</span>
       </a>
     </a-menu>
 
     <a-modal
-      title="登录"
+      title="Log in"
       v-model:visible="loginModalVisible"
       :confirm-loading="loginModalLoading"
       @ok="login"
     >
       <a-form :model="loginUser" :label-col="{ span: 6 }" :wrapper-col="{ span: 18 }">
-        <a-form-item label="登录名">
+        <a-form-item label="Username">
           <a-input v-model:value="loginUser.loginName" />
         </a-form-item>
-        <a-form-item label="密码">
+        <a-form-item label="Password">
           <a-input v-model:value="loginUser.password" type="password" />
         </a-form-item>
       </a-form>
@@ -88,7 +88,7 @@
 
       // 登录
       const login = () => {
-        console.log("开始登录");
+        console.log("Logging in ...");
         loginModalLoading.value = true;
         loginUser.value.password = hexMd5(loginUser.value.password + KEY);
         axios.post('/user/login', loginUser.value).then((response) => {
@@ -96,7 +96,7 @@
           const data = response.data;
           if (data.success) {
             loginModalVisible.value = false;
-            message.success("登录成功！");
+            message.success("Log in successfully!");
 
             store.commit("setUser", data.content);
           } else {
@@ -107,11 +107,11 @@
 
       // 退出登录
       const logout = () => {
-        console.log("退出登录开始");
+        console.log("Logging out ...");
         axios.get('/user/logout/' + user.value.token).then((response) => {
           const data = response.data;
           if (data.success) {
-            message.success("退出登录成功！");
+            message.success("Log out successfully!");
             store.commit("setUser", {});
           } else {
             message.error(data.message);
