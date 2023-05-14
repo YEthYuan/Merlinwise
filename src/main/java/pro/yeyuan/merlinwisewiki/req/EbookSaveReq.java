@@ -1,8 +1,11 @@
 package pro.yeyuan.merlinwisewiki.req;
 
+import javax.validation.constraints.NotNull;
+
 public class EbookSaveReq {
     private Long id;
 
+    @NotNull(message = "Ebook name shouldn't be none!")
     private String name;
 
     private Long category1Id;
