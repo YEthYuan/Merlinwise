@@ -3,6 +3,15 @@ Connection: Keep-Alive
 User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.6)
 Accept-Encoding: br,deflate,gzip,x-gzip
 
+<> 2023-05-13T182432.200.json
+
+###
+
+GET http://localhost:8080/ebook/list?page=1&size=1001
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.6)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
 <> 2023-05-13T181326.400.json
 
 ###
