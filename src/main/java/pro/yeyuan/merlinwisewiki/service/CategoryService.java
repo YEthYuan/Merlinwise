@@ -30,10 +30,19 @@ public class CategoryService {
     @Resource
     private SnowFlake snowFlake;
 
+    public List<CategoryQueryResp> all() {
+
+        CategoryExample categoryExample = new CategoryExample();
+        categoryExample.setOrderByClause("sort asc");
+        List<Category> categorys = categoryMapper.selectByExample(categoryExample);
+
+        return CopyUtil.copyList(categorys, CategoryQueryResp.class);
+    }
+
     public PageResp<CategoryQueryResp> list(CategoryQueryReq req) {
 
         CategoryExample categoryExample = new CategoryExample();
-        CategoryExample.Criteria criteria = categoryExample.createCriteria();
+        categoryExample.setOrderByClause("sort asc");
         PageHelper.startPage(req.getPage(), req.getSize());
         List<Category> categorys = categoryMapper.selectByExample(categoryExample);
 
