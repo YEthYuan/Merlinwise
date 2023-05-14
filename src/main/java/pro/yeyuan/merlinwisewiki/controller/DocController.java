@@ -10,7 +10,9 @@ import pro.yeyuan.merlinwisewiki.service.DocService;
 
 import javax.annotation.Resource;
 import javax.validation.Valid;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 @RestController
@@ -41,10 +43,20 @@ public class DocController {
         return resp;
     }
 
-    @DeleteMapping ("/delete/{id}")
-    public CommonResp delete(@PathVariable Long id) {
+//    @DeleteMapping ("/delete/{id}")
+//    public CommonResp delete(@PathVariable Long id) {
+//        CommonResp resp = new CommonResp<>();
+//        docService.delete(id);
+//        return resp;
+//    }
+    @DeleteMapping ("/delete/{idsStr}")
+    public CommonResp delete(@PathVariable String idsStr) {
         CommonResp resp = new CommonResp<>();
-        docService.delete(id);
+        List<String> list = Arrays.asList(idsStr.split(","));
+        List<Long> longList = list.stream()
+                        .map(Long::parseLong)
+                                .collect(Collectors.toList());
+        docService.delete(longList);
         return resp;
     }
 }
