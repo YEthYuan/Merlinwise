@@ -6,8 +6,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
+import pro.yeyuan.merlinwisewiki.domain.Content;
 import pro.yeyuan.merlinwisewiki.domain.Doc;
 import pro.yeyuan.merlinwisewiki.domain.DocExample;
+import pro.yeyuan.merlinwisewiki.mapper.ContentMapper;
 import pro.yeyuan.merlinwisewiki.mapper.DocMapper;
 import pro.yeyuan.merlinwisewiki.req.DocQueryReq;
 import pro.yeyuan.merlinwisewiki.req.DocSaveReq;
@@ -26,6 +28,9 @@ public class DocService {
 
     @Resource
     private DocMapper docMapper;
+
+    @Resource
+    private ContentMapper contentMapper;
 
     @Resource
     private SnowFlake snowFlake;
@@ -67,13 +72,20 @@ public class DocService {
 
     public void save(DocSaveReq req) {
         Doc doc = CopyUtil.copy(req, Doc.class);
+        Content content = CopyUtil.copy(req, Content.class);
         if(ObjectUtils.isEmpty(req.getId())) {
             // 新增
             doc.setId(snowFlake.nextId());
             docMapper.insert(doc);
+            content.setId(doc.getId());
+            contentMapper.insert(content);
         } else {
             // 更新
             docMapper.updateByPrimaryKey(doc);
+            int count = contentMapper.updateByPrimaryKeyWithBLOBs(content);
+            if(count == 0) {
+                contentMapper.insert(content);
+            }
         }
     }
 
