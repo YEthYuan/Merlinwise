@@ -1,8 +1,15 @@
 package pro.yeyuan.merlinwisewiki.req;
 
+
+import javax.validation.constraints.Max;
+import javax.validation.constraints.NotNull;
+
 public class PageReq {
+    @NotNull(message = "Page number shouldn't be none!")
     private int page;
 
+    @NotNull(message = "Page size shouldn't be none!")
+    @Max(value = 1000, message = "Page size should be smaller than 1000!")
     private int size;
 
     public int getPage() {
