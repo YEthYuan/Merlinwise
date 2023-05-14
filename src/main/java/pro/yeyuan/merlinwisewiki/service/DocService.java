@@ -70,6 +70,11 @@ public class DocService {
         return resp;
     }
 
+    public String findContent(Long id) {
+        Content content = contentMapper.selectByPrimaryKey(id);
+        return content.getContent();
+    }
+
     public void save(DocSaveReq req) {
         Doc doc = CopyUtil.copy(req, Doc.class);
         Content content = CopyUtil.copy(req, Content.class);
