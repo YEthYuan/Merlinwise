@@ -9,6 +9,8 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 import pro.yeyuan.merlinwisewiki.domain.User;
 import pro.yeyuan.merlinwisewiki.domain.UserExample;
+import pro.yeyuan.merlinwisewiki.exception.BusinessException;
+import pro.yeyuan.merlinwisewiki.exception.BusinessExceptionCode;
 import pro.yeyuan.merlinwisewiki.mapper.UserMapper;
 import pro.yeyuan.merlinwisewiki.req.UserQueryReq;
 import pro.yeyuan.merlinwisewiki.req.UserSaveReq;
@@ -72,11 +74,12 @@ public class UserService {
                 userMapper.insert(user);
             } else {
                 // Username already exist!
-
+                throw new BusinessException(BusinessExceptionCode.USER_LOGIN_NAME_EXIST);
             }
         } else {
             // 更新
-            userMapper.updateByPrimaryKey(user);
+            user.setLoginName(null);
+            userMapper.updateByPrimaryKeySelective(user);
         }
     }
 
