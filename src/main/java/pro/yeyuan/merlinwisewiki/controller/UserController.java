@@ -2,10 +2,12 @@ package pro.yeyuan.merlinwisewiki.controller;
 
 import org.springframework.util.DigestUtils;
 import org.springframework.web.bind.annotation.*;
+import pro.yeyuan.merlinwisewiki.req.UserLoginReq;
 import pro.yeyuan.merlinwisewiki.req.UserQueryReq;
 import pro.yeyuan.merlinwisewiki.req.UserResetPasswordReq;
 import pro.yeyuan.merlinwisewiki.req.UserSaveReq;
 import pro.yeyuan.merlinwisewiki.resp.CommonResp;
+import pro.yeyuan.merlinwisewiki.resp.UserLoginResp;
 import pro.yeyuan.merlinwisewiki.resp.UserQueryResp;
 import pro.yeyuan.merlinwisewiki.resp.PageResp;
 import pro.yeyuan.merlinwisewiki.service.UserService;
@@ -47,6 +49,14 @@ public class UserController {
         req.setPassword(DigestUtils.md5DigestAsHex(req.getPassword().getBytes()));
         CommonResp resp = new CommonResp<>();
         userService.resetPassword(req);
+        return resp;
+    }
+    @PostMapping("/login")
+    public CommonResp<UserLoginResp> login(@Valid @RequestBody UserLoginReq req) {
+        req.setPassword(DigestUtils.md5DigestAsHex(req.getPassword().getBytes()));
+        CommonResp<UserLoginResp> resp = new CommonResp<>();
+        UserLoginResp userLoginResp = userService.login(req);
+        resp.setContent(userLoginResp);
         return resp;
     }
 }

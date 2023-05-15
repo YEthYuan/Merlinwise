@@ -12,9 +12,11 @@ import pro.yeyuan.merlinwisewiki.domain.UserExample;
 import pro.yeyuan.merlinwisewiki.exception.BusinessException;
 import pro.yeyuan.merlinwisewiki.exception.BusinessExceptionCode;
 import pro.yeyuan.merlinwisewiki.mapper.UserMapper;
+import pro.yeyuan.merlinwisewiki.req.UserLoginReq;
 import pro.yeyuan.merlinwisewiki.req.UserQueryReq;
 import pro.yeyuan.merlinwisewiki.req.UserResetPasswordReq;
 import pro.yeyuan.merlinwisewiki.req.UserSaveReq;
+import pro.yeyuan.merlinwisewiki.resp.UserLoginResp;
 import pro.yeyuan.merlinwisewiki.resp.UserQueryResp;
 import pro.yeyuan.merlinwisewiki.resp.PageResp;
 import pro.yeyuan.merlinwisewiki.utils.CopyUtil;
@@ -103,5 +105,23 @@ public class UserService {
     public void resetPassword(UserResetPasswordReq req) {
         User user = CopyUtil.copy(req, User.class);
         userMapper.updateByPrimaryKeySelective(user);
+    }
+    public UserLoginResp login(UserLoginReq req) {
+        User userDb = selectByLoginName(req.getLoginName());
+        if(ObjectUtils.isEmpty(userDb)) {
+            // Username doesn't exist
+            LOG.info("Username doesn't exist! {}", req.getLoginName());
+            throw new BusinessException(BusinessExceptionCode.LOGIN_USER_ERROR);
+        } else {
+            if (userDb.getPassword().equals(req.getPassword())) {
+                // Login successfully
+                UserLoginResp loginResp = CopyUtil.copy(userDb, UserLoginResp.class);
+                return loginResp;
+            } else {
+                // Password incorrect
+                LOG.info("Password incorrect, input password={}, correct password={}", req.getPassword(), userDb.getPassword());
+                throw new BusinessException(BusinessExceptionCode.LOGIN_USER_ERROR);
+            }
+        }
     }
 }
