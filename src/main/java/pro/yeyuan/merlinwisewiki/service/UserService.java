@@ -13,6 +13,7 @@ import pro.yeyuan.merlinwisewiki.exception.BusinessException;
 import pro.yeyuan.merlinwisewiki.exception.BusinessExceptionCode;
 import pro.yeyuan.merlinwisewiki.mapper.UserMapper;
 import pro.yeyuan.merlinwisewiki.req.UserQueryReq;
+import pro.yeyuan.merlinwisewiki.req.UserResetPasswordReq;
 import pro.yeyuan.merlinwisewiki.req.UserSaveReq;
 import pro.yeyuan.merlinwisewiki.resp.UserQueryResp;
 import pro.yeyuan.merlinwisewiki.resp.PageResp;
@@ -98,5 +99,9 @@ public class UserService {
         } else {
             return users.get(0);
         }
+    }
+    public void resetPassword(UserResetPasswordReq req) {
+        User user = CopyUtil.copy(req, User.class);
+        userMapper.updateByPrimaryKeySelective(user);
     }
 }

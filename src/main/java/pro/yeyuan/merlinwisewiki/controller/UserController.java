@@ -3,6 +3,7 @@ package pro.yeyuan.merlinwisewiki.controller;
 import org.springframework.util.DigestUtils;
 import org.springframework.web.bind.annotation.*;
 import pro.yeyuan.merlinwisewiki.req.UserQueryReq;
+import pro.yeyuan.merlinwisewiki.req.UserResetPasswordReq;
 import pro.yeyuan.merlinwisewiki.req.UserSaveReq;
 import pro.yeyuan.merlinwisewiki.resp.CommonResp;
 import pro.yeyuan.merlinwisewiki.resp.UserQueryResp;
@@ -39,6 +40,13 @@ public class UserController {
     public CommonResp delete(@PathVariable Long id) {
         CommonResp resp = new CommonResp<>();
         userService.delete(id);
+        return resp;
+    }
+    @PostMapping("/reset-password")
+    public CommonResp resetPassword(@Valid @RequestBody UserResetPasswordReq req) {
+        req.setPassword(DigestUtils.md5DigestAsHex(req.getPassword().getBytes()));
+        CommonResp resp = new CommonResp<>();
+        userService.resetPassword(req);
         return resp;
     }
 }
