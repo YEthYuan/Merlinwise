@@ -1,5 +1,9 @@
 package pro.yeyuan.merlinwisewiki.controller;
 
+import com.alibaba.fastjson.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.util.DigestUtils;
 import org.springframework.web.bind.annotation.*;
 import pro.yeyuan.merlinwisewiki.req.UserLoginReq;
@@ -7,21 +11,31 @@ import pro.yeyuan.merlinwisewiki.req.UserQueryReq;
 import pro.yeyuan.merlinwisewiki.req.UserResetPasswordReq;
 import pro.yeyuan.merlinwisewiki.req.UserSaveReq;
 import pro.yeyuan.merlinwisewiki.resp.CommonResp;
+import pro.yeyuan.merlinwisewiki.resp.PageResp;
 import pro.yeyuan.merlinwisewiki.resp.UserLoginResp;
 import pro.yeyuan.merlinwisewiki.resp.UserQueryResp;
-import pro.yeyuan.merlinwisewiki.resp.PageResp;
 import pro.yeyuan.merlinwisewiki.service.UserService;
+import pro.yeyuan.merlinwisewiki.utils.SnowFlake;
 
 import javax.annotation.Resource;
 import javax.validation.Valid;
+import java.util.concurrent.TimeUnit;
 
 
 @RestController
 @RequestMapping("/user")
 public class UserController {
 
+    private static final Logger LOG = LoggerFactory.getLogger(UserController.class);
+
     @Resource
     private UserService userService;
+
+    @Resource
+    private SnowFlake snowFlake;
+
+    @Resource
+    private RedisTemplate redisTemplate;
 
     @GetMapping("/list")
     public CommonResp<PageResp<UserQueryResp>> list(@Valid UserQueryReq req) {
@@ -56,7 +70,21 @@ public class UserController {
         req.setPassword(DigestUtils.md5DigestAsHex(req.getPassword().getBytes()));
         CommonResp<UserLoginResp> resp = new CommonResp<>();
         UserLoginResp userLoginResp = userService.login(req);
+
+        Long token = snowFlake.nextId();
+        LOG.info("Login successfully, generate SSO token: {}, and store into redis", token);
+        userLoginResp.setToken(token.toString());
+        redisTemplate.opsForValue().set(token, JSONObject.toJSONString(userLoginResp), 3600 * 24, TimeUnit.SECONDS);
+
         resp.setContent(userLoginResp);
         return resp;
     }
+    @DeleteMapping ("/logout/{token}")
+    public CommonResp logout(@PathVariable String token) {
+        CommonResp resp = new CommonResp<>();
+        redisTemplate.delete(token);
+        LOG.info("Remove token {} from redis", token);
+        return resp;
+    }
+
 }
