@@ -1,14 +1,14 @@
 package pro.yeyuan.merlinwisewiki.req;
 
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Pattern;
 
 public class UserLoginReq {
 
-    @NotNull(message = "Username shouldn't be none!")
+    @NotEmpty(message = "Username shouldn't be none!")
     private String loginName;
 
-    @NotNull(message = "Password shouldn't be none!")
+    @NotEmpty(message = "Password shouldn't be none!")
     @Pattern(regexp = "^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{6,32}$", message = "Invalid password format!")
     private String password;
 

@@ -1,10 +1,10 @@
 package pro.yeyuan.merlinwisewiki.req;
 
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.NotEmpty;
 
 public class UserQueryReq extends PageReq {
 
-    @NotNull(message = "Username shouldn't be none!")
+    @NotEmpty(message = "Username shouldn't be none!")
     private String loginName;
 
     public String getLoginName() {
