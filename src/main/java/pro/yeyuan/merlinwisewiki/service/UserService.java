@@ -5,6 +5,7 @@ import com.github.pagehelper.PageInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 import pro.yeyuan.merlinwisewiki.domain.User;
 import pro.yeyuan.merlinwisewiki.domain.UserExample;
@@ -64,9 +65,15 @@ public class UserService {
     public void save(UserSaveReq req) {
         User user = CopyUtil.copy(req, User.class);
         if(ObjectUtils.isEmpty(req.getId())) {
-            // 新增
-            user.setId(snowFlake.nextId());
-            userMapper.insert(user);
+            User userDb = selectByLoginName(req.getLoginName());
+            if (ObjectUtils.isEmpty(userDb)) {
+                // 新增
+                user.setId(snowFlake.nextId());
+                userMapper.insert(user);
+            } else {
+                // Username already exist!
+
+            }
         } else {
             // 更新
             userMapper.updateByPrimaryKey(user);
@@ -75,5 +82,17 @@ public class UserService {
 
     public void delete(Long id) {
         userMapper.deleteByPrimaryKey(id);
+    }
+
+    public User selectByLoginName(String loginName) {
+        UserExample userExample = new UserExample();
+        UserExample.Criteria criteria = userExample.createCriteria();
+        criteria.andLoginNameEqualTo(loginName);
+        List<User> users = userMapper.selectByExample(userExample);
+        if (CollectionUtils.isEmpty(users)) {
+            return null;
+        } else {
+            return users.get(0);
+        }
     }
 }
